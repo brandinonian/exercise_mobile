@@ -3,23 +3,26 @@ import dayjs from "dayjs";
 
 const host = process.env.HOST;
 const port = process.env.PORT;
+const baseURL = 'http://' + host + port;
 
 
 // format on the date is going to be important here
 // needs to be url friendly but still useful as a mongo index
 export const get_exercises = (date) => {
-  axios.get(host + port + "/exercises/" + date)
+  console.log("fetching " + date)
+  axios.get(baseURL + "/exercises/" + date)
     .then(response => response.json())
     .then(json => {
-      return json.exercises;
+      console.log(json);
+      return json;
     })
     .catch(error => console.log(error));
 }
 
 export const post_exercise = (exercise) => {
-  axios.post((host + port + "/exercises"), {
+  axios.post((baseURL + "/exercises"), {
     name: exercise.name,
-    date: dayjs(),
+    date: dayjs().format('MMDDYYYY'),
     weight: exercise.weight,
     reps: exercise.reps,
     time: exercise.time
@@ -29,7 +32,7 @@ export const post_exercise = (exercise) => {
 }
 
 export const delete_exercise = (id) => {
-  axios.delete((host + port + "/exercises"), { id: id })
+  axios.delete((baseURL + "/exercises"), { id: id })
     .then(response => response)
     .catch(error => console.log(error));
 }

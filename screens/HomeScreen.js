@@ -1,35 +1,46 @@
-import { View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import DateNav from "../components/DateNav";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
-import { get_exercises } from "../data/server";
+import { get_exercises } from "../data/helpers";
 import ExerciseList from "../components/ExerciseList";
+import { appColors } from "../style/colors";
 
 export default function HomeScreen() {
 
-  const [date, setDate] = useState();
+  const [date, setDate] = useState(dayjs().format("MMDDYYYY"));
   const [exercises, setExercises] = useState();
   const [hasFetchError, setHasFetchError] = useState(false);
 
   useEffect(() => {
-    setDate(dayjs());
     try {
+      console.log("useEffect date " + date);
       data = get_exercises(date);
       setExercises(data);
     }
     catch (error) {
       setHasFetchError(true);
     }
-  }, [])
+  }, []);
 
   return (
-    <View>
+    <View style={styles.container}>
+      <View style={{height: "10%"}}></View>
       <DateNav date={date} setDate={setDate} />
       {
-        hasFetchError && exercises ?
+        (!hasFetchError && exercises) ?
           <ExerciseList exercises={exercises} />
-          : <View><Text>No Exercsises found...</Text></View>
+          : <View><Text style={{color: appColors.grey100}}>No Exercsises found...</Text></View>
       }
     </View>
-  )
+  );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: appColors.primary500,
+    height: "100%",
+    width: "100%",
+    alignItems: "center",
+  }
+});
